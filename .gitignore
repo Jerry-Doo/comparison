@@ -1,0 +1,4 @@
+data/dataset/tof_FT3/
+__pycache__/
+*.logdata/
+data/models/
