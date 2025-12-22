@@ -1,0 +1,7 @@
+numpy
+Pillow
+scipy
+matplotlib
+tfrecord
+tqdm
+pyyaml
