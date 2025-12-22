@@ -1,0 +1,5 @@
+mask_regression:
+  subnet_num: 4
+  in_channels: 81
+  n_filters: [32, 1]
+  filter_sizes: [3, 3]

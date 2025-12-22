@@ -1,0 +1,5 @@
+depth_residual_regression:
+  n_filters: [128, 96, 64, 32, 16, 1]
+  filter_sizes: [3, 3, 3, 3, 3, 3]
+  in_channels: 161
+  subnet_num: 2
