@@ -52,7 +52,7 @@ pip install -r requirements.txt
 python pipe/start.py \
   -b 2 \
   -s 200000 \
-  -m pyramid_corr_multi_frame_denoising \
+  -m ag_nafnet_itof \
   -p size384 \
   -k depth_kinect_with_gt_msk \
   -l 0.0004 \
@@ -60,25 +60,252 @@ python pipe/start.py \
   -i 480 640 \
   -o mean_l1 \
   --addGradient sobel_gradient \
-  -g 4 \
+  -g 1 \
   -e 1200
 ```
 
 ## How to Inference
 ```bash
 python pipe/start.py \
-  -f output \
-  -m dear_kpn_no_rgb_DeepToF \
-  -t tof_FT3 \
-  -o mean_l1 \
-  -p size384 \
-  -c 199036 \
   -b 2 \
+  -s 200000 \
+  -m sample_pyramid_add_kpn \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -f output \
+  -c 199036 \
+  -l 0.0004 \
+  -t tof_FT3 \
   -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
   -g 1
+  -e 1200
+```
+## How to ablate
+```bash
+## 去掉 FiLM
+BASE_CKPT=/datadisk8t/yansong/compare/demo/data/models/ag_nafnet_itof/tof_FT3_mean_l1_size384/model.ckpt-199200.pth
+python pipe/start.py \
+  -f train \
+  -b 2 \
+  -s 200000 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -l 0.0004 \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -e 1200 \
+  --ablation no_film \
+  --initCkpt "$BASE_CKPT" \
+  --initMode filter
+
+## 去掉 SkipFuse 的 cond gate
+BASE_CKPT=/datadisk8t/yansong/compare/demo/data/models/ag_nafnet_itof/tof_FT3_mean_l1_size384/model.ckpt-199200.pth
+python pipe/start.py \
+  -f train \
+  -b 2 \
+  -s 200000 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -l 0.0004 \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -e 1200 \
+  --ablation no_skip_gate \
+  --initCkpt "$BASE_CKPT" \
+  --initMode filter
+
+## 关闭 multi-scale refine
+BASE_CKPT=/datadisk8t/yansong/compare/demo/data/models/ag_nafnet_itof/tof_FT3_mean_l1_size384/model.ckpt-199200.pth
+python pipe/start.py \
+  -f train \
+  -b 2 \
+  -s 200000 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -l 0.0004 \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -e 1200 \
+  --ablation no_ms_refine \
+  --initCkpt "$BASE_CKPT" \
+  --initMode filter
+
+##去掉 NConv hint/detail 输入，结构变更
+BASE_CKPT=/datadisk8t/yansong/compare/demo/data/models/ag_nafnet_itof/tof_FT3_mean_l1_size384/model.ckpt-199200.pth
+python pipe/start.py \
+  -f train \
+  -b 2 \
+  -s 200000 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -l 0.0004 \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -e 1200 \
+  --ablation no_nconv_hint \
+  --initCkpt "$BASE_CKPT" \
+  --initMode filter
+
+## 去掉 invalid mask 输入，结构变更
+BASE_CKPT=/datadisk8t/yansong/compare/demo/data/models/ag_nafnet_itof/tof_FT3_mean_l1_size384/model.ckpt-199200.pth
+python pipe/start.py \
+  -f train \
+  -b 2 \
+  -s 200000 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -l 0.0004 \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -e 1200 \
+  --ablation no_invalid_mask \
+  --initCkpt "$BASE_CKPT" \
+  --initMode filter
+
+## 关闭 anti-aliased downsample，结构变更
+BASE_CKPT=/datadisk8t/yansong/compare/demo/data/models/ag_nafnet_itof/tof_FT3_mean_l1_size384/model.ckpt-199200.pth
+python pipe/start.py \
+  -f train \
+  -b 2 \
+  -s 200000 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -l 0.0004 \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -e 1200 \
+  --ablation no_aa_down \
+  --initCkpt "$BASE_CKPT" \
+  --initMode filter
 ```
 
-## Source of comparison methods
+## How to test the ablation
+```bash
+## 去掉 FiLM
+python pipe/start.py \
+  -f output \
+  -b 2 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -c 999999 \
+  -e 1200 \
+  --ablation no_film
+
+## 去掉 SkipFuse gate
+python pipe/start.py \
+  -f output \
+  -b 2 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -c 999999 \
+  -e 1200 \
+  --ablation no_skip_gate
+
+## 关闭 MS refine
+python pipe/start.py \
+  -f output \
+  -b 2 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -c 999999 \
+  -e 1200 \
+  --ablation no_ms_refine
+
+## 去掉 NConv hint/detail 输入
+python pipe/start.py \
+  -f output \
+  -b 2 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -c 999999 \
+  -e 1200 \
+  --ablation no_nconv_hint
+
+## 去掉 invalid mask 输入
+python pipe/start.py \
+  -f output \
+  -b 2 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -c 999999 \
+  -e 1200 \
+  --ablation no_invalid_mask
+
+## 关闭 anti-aliased downsample
+python pipe/start.py \
+  -f output \
+  -b 2 \
+  -m ag_nafnet_itof \
+  -p size384 \
+  -k depth_kinect_with_gt_msk \
+  -t tof_FT3 \
+  -i 480 640 \
+  -o mean_l1 \
+  --addGradient sobel_gradient \
+  -g 1 \
+  -c 999999 \
+  -e 1200 \
+  --ablation no_aa_down
+
+```
+## Different Methods
+
 There are four methods in the network folder, each corresponding to a different paper:
 
 <table>
