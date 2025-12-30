@@ -7,6 +7,7 @@ from network.dear_kpn_no_rgb_DeepToF import DearKPNNoRGBDeepToF
 from network.dear_kpn_no_rgb import DearKPNNoRGB
 from network.sample_pyramid_add_kpn import SamplePyramidAddKPN
 from network.pyramid_corr_multi_frame_denoising import PyramidCorrMaskMultiFrameDenoising
+from network.ag_nafnet_itof import AmpGuidedNAFNet
 ##################
 
 NETWORK_NAME = {
@@ -14,6 +15,7 @@ NETWORK_NAME = {
     'dear_kpn_no_rgb': DearKPNNoRGB,
     'sample_pyramid_add_kpn': SamplePyramidAddKPN,
     'pyramid_corr_multi_frame_denoising': PyramidCorrMaskMultiFrameDenoising,
+    'ag_nafnet_itof': AmpGuidedNAFNet,
 }
 
 ALL_NETWORKS = dict(NETWORK_NAME)
