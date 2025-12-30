@@ -69,11 +69,11 @@ python pipe/start.py \
 python pipe/start.py \
   -b 2 \
   -s 200000 \
-  -m sample_pyramid_add_kpn \
+  -m ag_nafnet_itof \
   -p size384 \
   -k depth_kinect_with_gt_msk \
   -f output \
-  -c 199036 \
+  -c 199200 \
   -l 0.0004 \
   -t tof_FT3 \
   -i 480 640 \
